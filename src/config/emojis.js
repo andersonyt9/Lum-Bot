@@ -7,5 +7,9 @@ export const EMOJI_SOURCES = {
   wnFramework: 'https://cdn.discordapp.com/emojis/1253845902318243883.png',
   wnAtualizacoes: 'https://cdn.discordapp.com/emojis/1254608904479047691.png',
   wnRelogio: 'https://cdn.discordapp.com/emojis/1254609198910537871.png',
-  wnAnuncio: 'https://cdn.discordapp.com/emojis/1187427667956482131.png'
+  wnAnuncio: 'https://cdn.discordapp.com/emojis/1187427667956482131.png',
+  wnAviso: 'https://cdn.discordapp.com/emojis/1296164668557230151.png',
+  wnPergunta: 'https://cdn.discordapp.com/emojis/1199773272661823508.png',
+  necessario: 'https://cdn.discordapp.com/emojis/996477331558383627.gif',
+  maui_add: 'https://cdn.discordapp.com/emojis/1294033620071350504.png'
 };

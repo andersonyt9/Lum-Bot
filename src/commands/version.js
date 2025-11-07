@@ -19,6 +19,11 @@ export async function execute(interaction) {
   const eUpdate     = EMO(interaction.guild, 'wnAtualizacoes', '🌐');
   const eClock      = EMO(interaction.guild, 'wnRelogio', '🕒');
   const eAnuncio    = EMO(interaction.guild, 'wnAnuncio', '📢');
+  const eAviso      = EMO(interaction.guild, 'wnAviso', '⚠️');
+  const ePergunta   = EMO(interaction.guild, 'wnPergunta', '❓');
+  const eNecessario = EMO(interaction.guild, 'necessario', '✅');
+  const eAdd        = EMO(interaction.guild, 'maui_add', '🆕');
+
 
   // ===== versão instalada do discord.js (robusta) =====
   let installed = 'unknown';
@@ -58,14 +63,14 @@ export async function execute(interaction) {
   const upToDate = installed !== 'unknown' && latest && installed === latest;
 
   // texto do bloco de atualização (sempre exibido)
-  let updateText = '❔ Não foi possível consultar o npm agora.';
+  let updateText = `${eAviso} Não foi possível consultar o npm agora.`;
   if (latest) {
     if (installed === 'unknown') {
-      updateText = '⚠️ Não foi possível detectar a versão instalada.\n✨ Use **`npm run update:deps`** para instalar a última versão do **discord.js**.';
+      updateText = `${ePergunta} Não foi possível detectar a versão instalada.\n✨ Use **\`npm run update:deps\`** para instalar a última versão do **discord.js**.`;
     } else if (upToDate) {
-      updateText = `✅ Você já está na última versão (**${latest}**).`;
+      updateText = `${eNecessario} Você já está na última versão (**${latest}**).`;
     } else {
-      updateText = `✨ Nova versão disponível (**${latest}** → atual: **${installed}**).\nUse **\`npm run update:deps\`** para atualizar o **discord.js**.`;
+      updateText = `${eAdd} Nova versão disponível (**${latest}** → atual: **${installed}**).\nUse **\`npm run update:deps\`** para atualizar o **discord.js**.`;
     }
   }
 
