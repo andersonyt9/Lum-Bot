@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
 import { execSync } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { getEmojiString as EMO } from '../utils/emojiSync.js';
 const require = createRequire(import.meta.url);
 
 export const data = new SlashCommandBuilder()
@@ -8,28 +9,20 @@ export const data = new SlashCommandBuilder()
   .setDescription('Mostra informações detalhadas do Lum-bot e das dependências.');
 
 export async function execute(interaction) {
-  // 1) tenta segurar a interação imediatamente
-  try {
-    // nada de ephemeral aqui; só segura o slot
-    await interaction.deferReply();
-  } catch (e) {
-    // Se já estiver inválida (10062), não tente responder de novo
-    if (Number(e?.code) === 10062) return;
-    // outros erros: só loga e sai
-    console.error('deferReply falhou:', e);
-    return;
-  }
+  try { await interaction.deferReply(); } catch (e) { if (Number(e?.code) === 10062) return; }
 
-  // 2) coleta versões (com timeout curto pra não travar)
+  const eIdeia      = EMO(interaction.guild, 'wnIdeia', '💡');
+  const eResultados = EMO(interaction.guild, 'wnResultados', '📊');
+  const eDocs       = EMO(interaction.guild, 'wnDocs', '📄');
+  const eFramework  = EMO(interaction.guild, 'wnFramework', '🧩');
+  const eUpdate     = EMO(interaction.guild, 'wnAtualizacoes', '🌐');
+  const eClock      = EMO(interaction.guild, 'wnRelogio', '🕒');
+  const eAnuncio    = EMO(interaction.guild, 'wnAnuncio', '📢');
+
   let installed = 'unknown';
   try { installed = require('discord.js/package.json').version; } catch {}
-
   let latest = null;
-  try {
-    latest = execSync('npm view discord.js version', { encoding: 'utf8', timeout: 2000 }).trim();
-  } catch {
-    latest = null;
-  }
+  try { latest = execSync('npm view discord.js version', { encoding: 'utf8', timeout: 2000 }).trim(); } catch {}
 
   const node = process.version;
   const uptime = formatUptime(process.uptime());
@@ -37,32 +30,23 @@ export async function execute(interaction) {
 
   const embed = new EmbedBuilder()
     .setColor(same ? 0x57F287 : 0x5865F2)
-    .setTitle('<:wnIdeia:1296163637597179994> Lum Bot • Informações de Sistema')
-    .setDescription('<:wnResultados:1296172666780389577> Status atual e versões do ambiente')
+    .setTitle(`${eIdeia} Lum Bot • Informações de Sistema`)
+    .setDescription(`${eResultados} Status atual e versões do ambiente`)
     .addFields(
-      { name: '<:wnDocs:1187427670397554779> Node.js', value: `\`${node}\``, inline: true },
-      { name: '<:wnFramework:1253845902318243883> discord.js (instalado)', value: `\`${installed}\``, inline: true },
-      { name: '<:wnAtualizacoes:1254608904479047691> discord.js (npm)', value: `\`${latest ?? 'indisponível'}\``, inline: true },
-      { name: '<:wnRelogio:1254609198910537871> Uptime', value: `\`${uptime}\``, inline: true },
+      { name: `${eDocs} Node.js`, value: `\`${node}\``, inline: true },
+      { name: `${eFramework} discord.js (instalado)`, value: `\`${installed}\``, inline: true },
+      { name: `${eUpdate} discord.js (npm)`, value: `\`${latest ?? 'indisponível'}\``, inline: true },
+      { name: `${eClock} Uptime`, value: `\`${uptime}\``, inline: true },
       { name: '💖 Projeto', value: '**Puff Host ❤️**\n✨ Melhorando sua comunidade' }
     )
     .setFooter({ text: 'Lum Bot © Puff Host' })
     .setTimestamp();
 
   if (!same && latest) {
-    embed.addFields({
-      name: '<:wnAnuncio:1187427667956482131> Atualização disponível',
-      value: 'Use `npm run update:deps` para instalar a última versão do discord.js.'
-    });
+    embed.addFields({ name: `${eAnuncio} Atualização disponível`, value: 'Use `npm run update:deps` para instalar a última versão do discord.js.' });
   }
 
-  // 3) tenta editar a resposta; se a interação “sumiu”, apenas ignore
-  try {
-    await interaction.editReply({ embeds: [embed] });
-  } catch (e) {
-    if (Number(e?.code) === 10062) return;
-    console.error('editReply falhou:', e);
-  }
+  try { await interaction.editReply({ embeds: [embed] }); } catch {}
 }
 
 function formatUptime(seconds) {
