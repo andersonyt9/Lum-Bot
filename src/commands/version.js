@@ -22,7 +22,7 @@ export async function execute(interaction) {
   const eAviso      = EMO(interaction.guild, 'wnAviso', '⚠️');
   const ePergunta   = EMO(interaction.guild, 'wnPergunta', '❓');
   const eNecessario = EMO(interaction.guild, 'necessario', '✅');
-  const eAdd        = EMO(interaction.guild, 'maui_add', '🆕');
+  const eAdd        = EMO(interaction.guild, 'maui_add', '🔎');
 
 
   // ===== versão instalada do discord.js (robusta) =====
