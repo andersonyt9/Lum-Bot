@@ -7,11 +7,9 @@ import { logger } from './logger.js';
 const require = createRequire(import.meta.url);
 
 function getInstalledDiscordJs() {
-  // tenta resolver o caminho físico do pacote e subir até achar o package.json
   try {
     const entry = require.resolve('discord.js'); // dist/index.js
     let dir = path.dirname(entry);
-
     for (let i = 0; i < 6; i++) {
       const p = path.join(dir, 'package.json');
       try {
@@ -23,8 +21,6 @@ function getInstalledDiscordJs() {
       dir = path.dirname(dir);
     }
   } catch {}
-
-  // fallback final
   return 'unknown';
 }
 
@@ -48,9 +44,11 @@ export function printRuntimeBanner() {
   if (latest) {
     logger.info('discord.js (último no npm):', latest);
     if (installed !== 'unknown' && installed !== latest) {
-      logger.warn('Há uma versão mais nova do discord.js. Rode: npm run update:deps');
-    } else {
+      logger.warn(`Atualização disponível: ${installed} → ${latest}. Rode: npm run update:deps`);
+    } else if (installed === latest) {
       logger.ok('Você está na última versão do discord.js.');
+    } else {
+      logger.warn('Não foi possível comparar versões (installed unknown).');
     }
   } else {
     logger.warn('Não foi possível consultar o npm (offline?).');
