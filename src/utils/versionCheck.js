@@ -1,15 +1,31 @@
 import { execSync } from 'node:child_process';
 import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { logger } from './logger.js';
 
 const require = createRequire(import.meta.url);
 
 function getInstalledDiscordJs() {
+  // tenta resolver o caminho físico do pacote e subir até achar o package.json
   try {
-    return require('discord.js/package.json').version;
-  } catch {
-    return 'unknown';
-  }
+    const entry = require.resolve('discord.js'); // dist/index.js
+    let dir = path.dirname(entry);
+
+    for (let i = 0; i < 6; i++) {
+      const p = path.join(dir, 'package.json');
+      try {
+        const pkg = JSON.parse(readFileSync(p, 'utf8'));
+        if (pkg?.name === 'discord.js' && pkg?.version) {
+          return pkg.version;
+        }
+      } catch {}
+      dir = path.dirname(dir);
+    }
+  } catch {}
+
+  // fallback final
+  return 'unknown';
 }
 
 function getLatestDiscordJs() {

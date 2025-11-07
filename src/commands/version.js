@@ -1,16 +1,16 @@
 import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
 import { execSync } from 'node:child_process';
-import { createRequire } from 'node:module';
 import { getEmojiString as EMO } from '../utils/emojiSync.js';
-const require = createRequire(import.meta.url);
 
 export const data = new SlashCommandBuilder()
   .setName('version')
   .setDescription('Mostra informações detalhadas do Lum-bot e das dependências.');
 
 export async function execute(interaction) {
+  // segura a interação (evita 10062)
   try { await interaction.deferReply(); } catch (e) { if (Number(e?.code) === 10062) return; }
 
+  // emojis (com fallback unicode)
   const eIdeia      = EMO(interaction.guild, 'wnIdeia', '💡');
   const eResultados = EMO(interaction.guild, 'wnResultados', '📊');
   const eDocs       = EMO(interaction.guild, 'wnDocs', '📄');
@@ -19,10 +19,47 @@ export async function execute(interaction) {
   const eClock      = EMO(interaction.guild, 'wnRelogio', '🕒');
   const eAnuncio    = EMO(interaction.guild, 'wnAnuncio', '📢');
 
+  // ===== versão instalada do discord.js (robusta) =====
   let installed = 'unknown';
-  try { installed = require('discord.js/package.json').version; } catch {}
+
+  // 1) tenta pelo export { version } do próprio discord.js
+  try {
+    const dj = await import('discord.js');
+    if (dj?.version) installed = dj.version;
+    else if (dj?.default?.version) installed = dj.default.version;
+  } catch {}
+
+  // 2) fallback: resolve o caminho do pacote e lê o package.json “na unha”
+  if (installed === 'unknown') {
+    try {
+      const { createRequire } = await import('node:module');
+      const { readFileSync } = await import('node:fs');
+      const path = await import('node:path');
+      const req = createRequire(import.meta.url);
+
+      const entry = req.resolve('discord.js'); // ex.: C:\...\node_modules\discord.js\dist\index.js
+      let dir = path.dirname(entry);
+
+      for (let i = 0; i < 6; i++) {
+        const p = path.join(dir, 'package.json');
+        try {
+          const pkg = JSON.parse(readFileSync(p, 'utf8'));
+          if (pkg?.name === 'discord.js' && pkg?.version) {
+            installed = pkg.version;
+            break;
+          }
+        } catch {}
+        dir = path.dirname(dir);
+      }
+    } catch {}
+  }
+  // =====================================================
+
+  // versão mais recente (timeout curto p/ não travar)
   let latest = null;
-  try { latest = execSync('npm view discord.js version', { encoding: 'utf8', timeout: 2000 }).trim(); } catch {}
+  try {
+    latest = execSync('npm view discord.js version', { encoding: 'utf8', timeout: 2000 }).trim();
+  } catch { latest = null; }
 
   const node = process.version;
   const uptime = formatUptime(process.uptime());
