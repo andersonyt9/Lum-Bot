@@ -1,0 +1,25 @@
+{
+  "name": "Lum-Bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "scripts": {
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js",
+    "deploy:commands": "node ./src/handlers/commandLoader.js --deploy",
+    "check:update": "node ./src/utils/cli-check.js",
+    "update:deps": "npm i discord.js@latest",
+    "env:print": "node ./src/utils/printEnv.js"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "discord.js": "^14.24.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
