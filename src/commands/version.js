@@ -37,13 +37,13 @@ export async function execute(interaction) {
 
   const embed = new EmbedBuilder()
     .setColor(same ? 0x57F287 : 0x5865F2)
-    .setTitle('💡 Lum Bot • Informações de Sistema')
-    .setDescription('📊 Status atual e versões do ambiente')
+    .setTitle('<:wnIdeia:1296163637597179994> Lum Bot • Informações de Sistema')
+    .setDescription('<:wnResultados:1296172666780389577> Status atual e versões do ambiente')
     .addFields(
-      { name: '🧩 Node.js', value: `\`${node}\``, inline: true },
-      { name: '⚙️ discord.js (instalado)', value: `\`${installed}\``, inline: true },
-      { name: '🌐 discord.js (npm)', value: `\`${latest ?? 'indisponível'}\``, inline: true },
-      { name: '🕒 Uptime', value: `\`${uptime}\``, inline: true },
+      { name: '<:wnDocs:1187427670397554779> Node.js', value: `\`${node}\``, inline: true },
+      { name: '<:wnFramework:1253845902318243883> discord.js (instalado)', value: `\`${installed}\``, inline: true },
+      { name: '<:wnAtualizacoes:1254608904479047691> discord.js (npm)', value: `\`${latest ?? 'indisponível'}\``, inline: true },
+      { name: '<:wnRelogio:1254609198910537871> Uptime', value: `\`${uptime}\``, inline: true },
       { name: '💖 Projeto', value: '**Puff Host ❤️**\n✨ Melhorando sua comunidade' }
     )
     .setFooter({ text: 'Lum Bot © Puff Host' })
@@ -51,7 +51,7 @@ export async function execute(interaction) {
 
   if (!same && latest) {
     embed.addFields({
-      name: '📦 Atualização disponível',
+      name: '<:wnAnuncio:1187427667956482131> Atualização disponível',
       value: 'Use `npm run update:deps` para instalar a última versão do discord.js.'
     });
   }
