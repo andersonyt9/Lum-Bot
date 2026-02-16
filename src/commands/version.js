@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { execSync } from 'node:child_process';
 import { getEmojiString as EMO } from '../utils/emojiSync.js';
 
@@ -92,7 +92,15 @@ export async function execute(interaction) {
     })
     .setTimestamp();
 
-  try { await interaction.editReply({ embeds: [embed] }); } catch {}
+  const row = new ActionRowBuilder()
+    .addComponents(
+      new ButtonBuilder()
+        .setLabel('Ver no GitHub')
+        .setStyle(ButtonStyle.Link)
+        .setURL('https://github.com/example/repo'),
+    );
+
+  try { await interaction.editReply({ embeds: [embed], components: [row] }); } catch {}
 }
 
 function formatUptime(seconds) {
